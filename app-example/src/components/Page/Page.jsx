@@ -13,7 +13,7 @@ const Page = props => {
 
   return (
     <section className={styles.page}>
-      <main>
+      <main className={styles.container}>
         {pageName && (
           <h2>{pageName}</h2>
         )}

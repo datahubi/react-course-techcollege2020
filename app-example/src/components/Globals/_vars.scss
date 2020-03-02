@@ -1,3 +1,11 @@
+@import "./include-media";
+
+$breakpoints: (
+  'phone': 320px,
+  'tablet': 768px,
+  'desktop': 1024px
+);
+
 $container-padding: 1rem;
 
 // mobile
