@@ -1,0 +1,90 @@
+$container-padding: 1rem;
+
+$navHeight: 3rem;
+
+.page {
+  position: relative;
+  width: 100%;
+  flex-grow: 1;
+  min-height: calc(100vh - #{$navHeight});
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  section {
+    padding: $container-padding;
+    padding-right: 2 * $container-padding;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  &.home {
+    background: rgb(224, 224, 224);
+    section {
+      background: rgba(255, 255, 255, 0.5);
+      height: 100%;
+      flex-grow: 5;
+    }
+  }
+
+  &.pageInnerAbout {
+
+  background: steelblue;
+  flex-grow: 5;
+    section {
+      background: rgba(255, 255, 255, 0.2);
+      height: 100%;
+      flex-grow: 5;
+      padding: $container-padding;
+      color: rgba(29, 14, 14, 0.863);
+    }
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.pageFooter {
+  width: 100%;
+  background: #333;
+  color: #fff;
+  height: $navHeight;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  height: $navHeight;
+  background: #333;
+}
+
+.navbar {
+  display: flex;
+  height: 100%;
+
+  li {
+    height: 100%;
+  }
+}
+
+.navLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  height: 100%;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.navLinkActive {
+  position: relative;
+  background: rgb(161, 64, 64);
+}
