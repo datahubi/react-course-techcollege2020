@@ -1,0 +1,44 @@
+.funBtn {
+  margin: 1rem 0;
+  color: rgb(63, 63, 63);
+  background: #4435352a;
+  border: none;
+  border-radius: 0.2rem;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.2rem;
+  display: flex;
+  transition: all 0.3s ease;
+  &:hover {
+    color: rgb(255, 255, 255);
+    transform: scale(1.1);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  }
+  &:active {
+    transform: scale(0.9);
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.btnOpen {
+  @extend .funBtn;
+  color: rgb(63, 63, 63);
+  background: #4435352a;
+  &:hover {
+    color: rgb(63, 63, 63);
+  }
+}
+
+.btnClosed {
+  @extend .funBtn;  
+  color: rgb(219, 217, 217);
+  background: #a13d3d;
+}
+
+
+.h1Morph {
+  font-size: 2rem;
+}
+
+.h2Morph {
+  font-size: 1rem;
+}

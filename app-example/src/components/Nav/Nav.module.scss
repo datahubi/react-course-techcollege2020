@@ -1,0 +1,124 @@
+@import "../Globals/vars";
+
+@keyframes ActiveLink {
+  from {
+    background: rgba(161, 64, 64, 0);
+    
+  }
+  to {
+    background: rgba(161, 64, 64, 1);
+
+  }
+}
+
+@keyframes Link {
+  from {
+    
+    background: rgba(161, 64, 64, 1);
+  }
+  to {
+    
+    background: rgba(161, 64, 64, 0);
+  }
+}
+
+
+.nav {
+  display: flex;
+  align-items: center;
+  height: $navHeight;
+  background: $navColorBg;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+}
+
+.navbar {
+  display: flex;
+  height: 100%;
+
+  li {
+    height: 100%;
+  }
+}
+
+.navLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  height: 100%;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.5s ease-in-out;
+  animation-name: Link;
+  animation-play-state: running;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}
+
+.navLinkActive {
+  @extend .navLink;
+  cursor: pointer;
+  user-select: none;
+  animation-name: ActiveLink;
+  animation-play-state: running;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}
+
+.exitActive {
+  animation-name: Link;
+  animation-play-state: running;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}
+
+.enterActive {
+  cursor: pointer;
+  user-select: none;
+  animation-name: ActiveLink;
+  animation-play-state: running;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}
+
+.navTools {
+  left: calc(100vw - 1rem);
+  position: absolute;
+  display: flex;
+  height: 100%;
+  transform: translateX(-100%);
+  button {
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    transition: all 0.5s;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      height: 2rem;
+      width: 2rem;
+    }
+    &:hover {
+      box-shadow: 0px 0px 10px rgba(white, 0.5);
+    }
+    &:active {
+      box-shadow: 0px 0px 0px rgba(white, 1);
+      outline: none;
+      
+    }
+  }
+}
