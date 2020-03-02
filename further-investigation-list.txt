@@ -1,0 +1,17 @@
+Context API
+
+Suspense API
+
+Apollo Client
+
+PropTypes
+
+GSAP
+
+React Spring & react-use-gesture (@juggle/resize-observer til IOS)
+
+HOOKS API - custom hooks
+
+React Hook Form 
+
+Gatsby
