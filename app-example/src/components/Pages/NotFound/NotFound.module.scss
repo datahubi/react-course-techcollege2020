@@ -28,11 +28,12 @@
 
 $handle-size: 3rem;
 .showIcon {
-  margin: 0;
-  padding: 0;
   background: transparent;
   outline: none;
   border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   svg {
     background: inherit;
     color: #333;
@@ -74,6 +75,7 @@ $handle-size: 3rem;
     height: 1.5rem;
     width: 1.5rem;
     padding: 0.2rem;
+    margin: 0;
     border: none;
     outline: none;
     cursor: pointer;

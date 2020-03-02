@@ -241,9 +241,9 @@ const NotFound = props => {
         />
 
         <figcaption className={styles.toolBox}>
-          <button className={styles.showIcon}>
+          <div className={styles.showIcon}>
             <ToolsHandle style={{ color: color }} />
-          </button>
+          </div>
           <section className={styles.tools}>
             <SketchPicker color={color} onChangeComplete={handleColor} />
             <div className={styles.toolButtons}>
