@@ -4,9 +4,9 @@ import "./App.css";
 
 function Welcome() {
   return (
-    <p>
+    <h1>
       Hej store verden!!
-    </p>
+    </h1>
   )
 }
 
@@ -22,20 +22,20 @@ function Counter() {
   }
 
   return (
-    <div>
+    <section>
       <button onClick={countUp}>Tæl op</button>
       <button onClick={countDown}>Tæl ned</button> 
       <p>{count}</p>
-    </div>
+    </section>
   )
 }
 
 
 function Container(props) {
   return (
-    <div>
+    <article>
       {props.children}
-    </div>
+    </article>
   )
 }
 
