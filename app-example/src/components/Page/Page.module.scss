@@ -1,0 +1,116 @@
+@import '../Globals/vars';
+
+
+.page {
+  position: relative;
+  width: 100%;
+  display: flex;  
+  min-height: calc(100vh - #{$navHeight});
+  justify-content: space-between;
+  flex-direction: column;
+  
+  // forslag:
+  // lav en måde at smide en ekstra klasse på section med page klassen
+  // jo ikke sikkert alle sider skal have padding og samme background's farve
+  // plus du kan spare div'en pageInner væk og kan beholde din h2'er inde i page component :)
+  // &.home {
+  //   // sætter du padding her, vil du ikke kunne få noget længere inde i den her kasse til at fylde 100%
+  //   // f.eks en divider med en anden baggrundsfarve hvor den farve gerne skulle være 100% af siden :)
+  //   padding: $container-padding;
+  //   background: rgb(224, 224, 224);
+  // }
+
+  // h2 {
+  //   margin-top: 0;
+  // }
+}
+
+@mixin animation() {
+  width: 100vw;
+  position: fixed !important;
+  top: $navHeight;
+  left: 0;
+}
+
+.enterRev {
+  @include animation();
+
+  @media only screen and (max-width: 600px) {
+    transform: translate($enter-mobile-trans-rev);
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 0.01;
+    transform: translate($enter-trans);
+  }
+}
+.enter {
+  @include animation();
+
+  @media only screen and (max-width: 600px) {
+    transform: translate($enter-mobile-trans);
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 0.01;
+    transform: translate($enter-trans);
+  }
+}
+
+.enterActive {
+  @include animation();
+  @media only screen and (max-width: 600px) {
+    transform: translate(0%, 0%);
+    transition: all $enter-mobile-time ease-in-out;
+    transition-delay: $enter-mobile-delay;
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 1;
+    transform: translate(0%, 0%);
+    transition: all $enter-time ease-in-out;
+    transition-delay: $enter-delay;
+  }
+}
+
+.exit {
+  @include animation();
+
+  @media only screen and (max-width: 600px) {
+    transform: translate(0%, 0%);
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 1;
+    transform: translate(0%, 0%);
+  }
+}
+
+.exitActiveRev {
+  @include animation();
+
+  @media only screen and (max-width: 600px) {
+    transform: translate($exit-mobile-trans-rev);
+    transition: all $exit-mobile-time;
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 0.01;
+    transform: translate($exit-trans);
+    transition: all $exit-time;
+  }
+}
+.exitActive {
+  @include animation();
+
+  @media only screen and (max-width: 600px) {
+    transform: translate($exit-mobile-trans);
+    transition: all $exit-mobile-time;
+  }
+
+  @media only screen and (min-width: 600px) {
+    opacity: 0.01;
+    transform: translate($exit-trans);
+    transition: all $exit-time;
+  }
+}
