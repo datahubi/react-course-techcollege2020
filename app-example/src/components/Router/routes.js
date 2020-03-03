@@ -5,7 +5,8 @@ import FunNGames from "../Pages/FunNGames/FunNGames";
 import NewMorph from "../Pages/NewMorph/NewMorph";
 import NotFound from "../Pages/NotFound/NotFound";
 import Form from "../Pages/FormSteps/FormSteps";
-import FetchPage from '../Pages/FetchPage/FetchPage'
+import FetchPage from '../Pages/FetchPage/FetchPage';
+import LoaderExample from '../Pages/LoaderExample/LoaderExample';
 
 export const routes = [
   {
@@ -49,6 +50,12 @@ export const routes = [
     path: "/fetch",
     exact: false,
     component: FetchPage
+  },
+  {
+    name: "Loader",
+    path: "/loader-example",
+    exact: false,
+    component: LoaderExample
   },
   {
     name: "fail",
