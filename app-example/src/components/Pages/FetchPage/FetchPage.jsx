@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
 const FetchPage = props => {
   const [apiData, setApiData] = useState(null);
@@ -8,7 +8,7 @@ const FetchPage = props => {
     if (!apiData) {
       const fetchHeaders = new Headers();
       fetchHeaders.append("Accept", "application/json");
-      
+
       fetch("https://icanhazdadjoke.com/", {
         headers: fetchHeaders,
         signal: fetchController.signal
@@ -31,16 +31,12 @@ const FetchPage = props => {
       .then(data => setApiData(data))
       .catch(err => console.log(err));
   }
-  
+
   return (
     <div>
-      <button onClick={getNewJoke}>
-        Ny joke, tak!
-      </button> 
-      <br/>
-      {apiData && apiData.joke && (
-        <span>{apiData.joke}</span>
-      )}
+      <button onClick={getNewJoke}>Ny joke, tak!</button>
+      <br />
+      {apiData && apiData.joke && <span>{apiData.joke}</span>}
     </div>
   );
 };

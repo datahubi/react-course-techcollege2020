@@ -2,20 +2,23 @@ import React from "react";
 import { useForm, ErrorMessage } from "react-hook-form";
 import { Route, Switch, Redirect, Link } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { useStoreState, useStoreActions } from 'easy-peasy'
+import { useStoreState, useStoreActions } from "easy-peasy";
 
-import FormStore from './FormStepsStore';
+import FormStore from "./FormStepsStore";
 
 import styles from "./Form.module.scss";
 
 const Form1 = props => {
   const { order, steps, rootRoute, history } = props;
   const { handleSubmit, register, errors } = useForm();
-  const { setData } = useStoreActions(actions => actions.step1)
+  const { setData } = useStoreActions(actions => actions.step1);
 
   const onSubmit = values => {
-    setData(values)
-    history.push({pathname: rootRoute + steps[order + 1], state: { disableRouteAnimations: true }})
+    setData(values);
+    history.push({
+      pathname: rootRoute + steps[order + 1],
+      state: { disableRouteAnimations: true }
+    });
   };
 
   return (
@@ -56,11 +59,14 @@ const Form1 = props => {
 const Form2 = props => {
   const { steps, order, rootRoute, history } = props;
   const { handleSubmit, register, errors } = useForm();
-  const { setData } = useStoreActions(actions => actions.step2)
+  const { setData } = useStoreActions(actions => actions.step2);
 
   const onSubmit = values => {
-    setData(values)
-    history.push({pathname: rootRoute + steps[order + 1], state: { disableRouteAnimations: true }})
+    setData(values);
+    history.push({
+      pathname: rootRoute + steps[order + 1],
+      state: { disableRouteAnimations: true }
+    });
   };
 
   return (
@@ -87,7 +93,10 @@ const Form2 = props => {
         <input
           name="name"
           ref={register({
-            pattern: { value: /[a-zA-Z]/gi, message: "Kun bogstaver" },
+            pattern: { 
+              value: /^[a-zA-Z\s]*$/, 
+              message: "Kun bogstaver" 
+            },
             required: "Nødvendig"
           })}
         />
@@ -98,7 +107,7 @@ const Form2 = props => {
       <Link to={{ pathname: "/form", state: { disableRouteAnimations: true } }}>
         Gå til form
       </Link>
-      <br/>
+      <br />
       <button type="submit">Submit</button>
     </form>
   );
@@ -106,22 +115,23 @@ const Form2 = props => {
 
 const Form3 = props => {
   const { rootRoute } = props;
-  const { step1: { data: step1Data }, step2: { data: step2Data } } = useStoreState(state => state);
-  const { resetStore } = useStoreActions(state => state)
+  const {
+    step1: { data: step1Data },
+    step2: { data: step2Data }
+  } = useStoreState(state => state);
+  const { resetStore } = useStoreActions(state => state);
   const summary = {
     ...step1Data,
     ...step2Data
-  }
+  };
 
   return (
     <div>
-      <button onClick={resetStore}>
-        Reset
-      </button>
-      <pre>
-        {JSON.stringify(summary, null, 2)}
-      </pre>
-      <Link to={{ pathname: rootRoute, state: { disableRouteAnimations: true } }}>
+      <button onClick={resetStore}>Reset</button>
+      <pre>{JSON.stringify(summary, null, 2)}</pre>
+      <Link
+        to={{ pathname: rootRoute, state: { disableRouteAnimations: true } }}
+      >
         Gå til form
       </Link>
     </div>
@@ -148,7 +158,6 @@ const formSteps = [
 
 const formStepsRoutes = formSteps.map(step => step.path);
 
-
 const FormSteps = props => {
   const { location, route: thisRoute } = props;
 
@@ -161,7 +170,6 @@ const FormSteps = props => {
       return <Comp {...newProps} />;
     };
   };
-
 
   return (
     <div>
@@ -200,7 +208,7 @@ const FormSteps = props => {
                     component={routeWrapper(component, {
                       order: idx,
                       steps: formStepsRoutes,
-                      rootRoute: thisRoute.path,
+                      rootRoute: thisRoute.path
                     })}
                     exact
                   />
