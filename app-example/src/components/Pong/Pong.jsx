@@ -1,13 +1,36 @@
-import React from 'react'
-
-
-const court = props => {
-  
-}
-
-
+import React, { useState, useRef } from "react";
+import IO from "./IO";
+import WinAni from "./WinAnimation";
 export default function Pong(props) {
+  const [pause, setPause] = useState(false);
+  // const start = useRef(true);
+  const [winnerFound, setWinnerFound] = useState(null);
 
+  const setWinner = winner => {
+    setWinnerFound(winner);
+    setPause(true);
+  };
 
-  return null
+  return (
+    <>
+      {/* <button
+        onClick={() => {
+          setPause(!pause)
+          // start.current = !start.current;
+        }}
+      >
+        pause
+      </button> */}
+      {/* <IO pauseGame={start.current} /> */}
+      {/* {winnerFound ? (
+        <WinAni winner={winnerFound} />
+      ) : (
+        <IO winnerFound={setWinner} />
+        // <IO pauseGame={pause} winnerFound={setWinner} />
+      )} */}
+
+      {!!winnerFound && <WinAni winner={winnerFound} />}
+      <IO winnerFound={setWinner} />
+    </>
+  );
 }

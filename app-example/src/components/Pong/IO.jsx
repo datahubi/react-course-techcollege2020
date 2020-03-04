@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useCallback, memo } from "react";
 import {
   // useSprings,
   // interpolate,
@@ -8,87 +8,42 @@ import {
 } from "react-spring";
 import { useGesture } from "react-use-gesture";
 
-const clearRequestInterval = function(handle) {
+const clearRequestInterval = handle => {
   if (!handle) return;
-  window.cancelAnimationFrame
-    ? window.cancelAnimationFrame(handle.value)
-    : window.webkitCancelAnimationFrame
-    ? window.webkitCancelAnimationFrame(handle.value)
-    : window.webkitCancelRequestAnimationFrame
-    ? window.webkitCancelRequestAnimationFrame(
-        handle.value
-      ) /* Support for legacy API */
-    : window.mozCancelRequestAnimationFrame
-    ? window.mozCancelRequestAnimationFrame(handle.value)
-    : window.oCancelRequestAnimationFrame
-    ? window.oCancelRequestAnimationFrame(handle.value)
-    : window.msCancelRequestAnimationFrame
-    ? window.msCancelRequestAnimationFrame(handle.value)
-    : clearInterval(handle);
-};
-
-const rInterval = (callback, render) => {
-  const requestAnimation = window.requestAnimationFrame;
-  let stop;
-  const intervalFunc = () => {
-    if (!stop) {
-      return callback(requestAnimation(intervalFunc));
-    }
-  };
-  requestAnimation(intervalFunc);
-  return {
-    clear: () => {
-      stop = true;
-    }
-  };
+  window.cancelAnimationFrame(handle.value);
+  // window.cancelAnimationFrame
+  //   ? window.cancelAnimationFrame(handle.value)
+  //   : window.webkitCancelAnimationFrame
+  //   ? window.webkitCancelAnimationFrame(handle.value)
+  //   : window.webkitCancelRequestAnimationFrame
+  //   ? window.webkitCancelRequestAnimationFrame(
+  //       handle.value
+  //     ) /* Support for legacy API */
+  //   : window.mozCancelRequestAnimationFrame
+  //   ? window.mozCancelRequestAnimationFrame(handle.value)
+  //   : window.oCancelRequestAnimationFrame
+  //   ? window.oCancelRequestAnimationFrame(handle.value)
+  //   : window.msCancelRequestAnimationFrame
+  //   ? window.msCancelRequestAnimationFrame(handle.value)
+  //   : clearInterval(handle);
 };
 
 // Add a function that uses requestAnimationFrame
 // and has a similar syntax to setInterval, but more performant
-const requestInterval = (fn, stop) => {
-  // var handle = new Object();
+const requestInterval = fn => {
   var handle = {};
-  // const stop = ref.current;
 
-  // rAF parses a timestamp of the animation
   handle.loop = ms => {
-    // if (handle.lastTime) {
-    //   let dt = ms - handle.lastTim e;
-    //   handle.dt = dt;
-    //   fn(dt / 10);
-    // }
     fn.call();
     handle.lastTime = ms;
-    handle.value = requestAnimationFrame(handle.loop);
+    handle.value = window.requestAnimationFrame(handle.loop);
   };
 
   // rAF returns a unique integer per frame, use it to cancelAnimationFrame()
-  handle.value = requestAnimationFrame(handle.loop);
+  handle.value = window.requestAnimationFrame(handle.loop);
 
   return handle;
 };
-
-// const requestInterval = function(fn, delay) {
-
-//   var start = new Date().getTime();
-//   var handle = {};
-//     // handle = new Object();
-
-//   function loop() {
-//     var current = new Date().getTime(),
-//       delta = current - start;
-
-//     if (delta >= delay) {
-//       fn.call();
-//       start = new Date().getTime();
-//     }
-
-//     handle.value = requestAnimationFrame(loop);
-//   }
-
-//   handle.value = requestAnimationFrame(loop);
-//   return handle;
-// };
 
 function moveSection(domElemnt, xOffset, yOffset) {
   if (domElemnt) {
@@ -102,17 +57,55 @@ function moveSection(domElemnt, xOffset, yOffset) {
   }
 }
 
+// Check which direction the ball is heading,
+// to prevent that the ball is 'sticking' to the side,
+// or the paddles on collisions.
+function whichDir(old, current) {
+  if (old < current) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+/**
+ *  Get a random number within the range of
+ *  min and max. The number is also randomly negative
+ * @param {float} min
+ * @param {float} max
+ */
+function getRandomArbitrary(min = 0.2, max = 1) {
+  if (Math.random() < 0.5) {
+    return Math.random() * (max - min) + min;
+  } else {
+    return -(Math.random() * (max - min) + min);
+  }
+}
+
 function IO(props) {
+  const { winnerFound, pauseGame: remotePause } = props;
+
+  const stop = useRef(true);
+
+  const paddleSensitivity = 1.5;
+  const ballAcceleration = useRef(6);
+  const ballAccelerationFactor = 2;
+
   const paddleRightRef = useRef();
   const paddleLeftRef = useRef();
   const ballRef = useRef();
   const courtRef = useRef();
-  const sizes = useRef({
-    ball: [0, 0],
-    paddleLeft: [0, 0],
-    paddleRight: [0, 0],
-    court: [0, 0]
+
+  const winningRound = 1;
+  const score = useRef({
+    player1: 0,
+    player2: 0
   });
+
+  const scored = useRef(false);
+
+  const player1Score = useRef();
+  const player2Score = useRef();
 
   const positions = useRef({
     ball: [0, 0],
@@ -120,154 +113,22 @@ function IO(props) {
     paddleRight: [0, 0]
   });
 
+  const winner = useRef();
+
   const getSafeRef = ref => {
     const curRef = ref.current;
     if (curRef) return curRef;
     return null;
   };
 
-  useEffect(() => {
-    const pl = getSafeRef(paddleLeftRef);
-    const pr = getSafeRef(paddleRightRef);
-    const br = getSafeRef(ballRef);
-    const cr = getSafeRef(courtRef);
-    let game;
-    if (pl && pr && br && cr) {
-      // const plSize = pl.getBBox();
-      // const prSize = pr.getBBox();
-      // const bSize = br.getBBox();
-      // const cSize = cr.getBBox();
-      const plSize = pl.getBoundingClientRect();
-      const prSize = pr.getBoundingClientRect();
-      const bSize = br.getBoundingClientRect();
-      const cSize = cr.getBoundingClientRect();
-      // console.log("IO -> cSize", cSize)
-      sizes.current = {
-        ball: [bSize.width, bSize.height],
-        paddleLeft: [plSize.width, plSize.height],
-        paddleRight: [prSize.width, prSize.height],
-        court: [cSize.width, cSize.height]
-      };
-      console.log("IO -> sizes.current", sizes.current);
-      game = requestInterval(dt => {
-        console.log("game -> dt", dt);
-        // const game = requestInterval(dt => {
-        if (stop.current) return;
-        const curPosX = positions.current.ball[0];
-        const curPosY = positions.current.ball[1];
-        const newPosX = curPosX + 1;
-        const newPosY = curPosY + 1;
-        positions.current.ball[0] = newPosX;
-        positions.current.ball[1] = newPosY;
-        moveSection(ballRef.current, newPosX, newPosY);
-        // console.log("dt", dt)
-      });
-    }
-    return () => {
-      clearRequestInterval(game);
-    };
-  }, [paddleLeftRef, paddleRightRef, ballRef]);
-  // })
-  const stop = useRef(true);
-
-  // const rInterval = callback => {
-  //   const requestAnimation = window.requestAnimationFrame;
-  //   let Stop = stop.current;
-  //   // let Stop;
-  //   const intervalFunc = () => {
-  //     if (Stop) {
-  //       return callback(requestAnimation(intervalFunc));
-  //     }
-  //   };
-  //   requestAnimation(intervalFunc);
-  //   return {
-  //     clear: () => {
-  //       // Stop = true;
-  //       Stop = !Stop;
-  //     }
-  //   };
-  // };
-
-  // const game = useMemo(requestInterval(dt => {
-  //   console.log("game -> dt", dt);
-  //   // const game = requestInterval(dt => {
-  //   // if (stop.current) return;
-  //   const curPosX = positions.current.ball[0];
-  //   const curPosY = positions.current.ball[1];
-  //   const newPosX = curPosX + 1;
-  //   const newPosY = curPosY + 1;
-  //   positions.current.ball[0] = newPosX;
-  //   positions.current.ball[1] = newPosY;
-  //   moveSection(ballRef.current, newPosX, newPosY);
-  //   // console.log("dt", dt)
-  // }, stop));
-
-  // const game = useRef(requestInterval(dt => {
-  //   console.log("game -> dt", dt);
-  //   // const game = requestInterval(dt => {
-  //   // if (stop.current) return;
-  //   const curPosX = positions.current.ball[0];
-  //   const curPosY = positions.current.ball[1];
-  //   const newPosX = curPosX + 1;
-  //   const newPosY = curPosY + 1;
-  //   positions.current.ball[0] = newPosX;
-  //   positions.current.ball[1] = newPosY;
-  //   moveSection(ballRef.current, newPosX, newPosY);
-  //   // console.log("dt", dt)
-  // }, stop.current));
-
-  // const game = useRef(
-  //   // rInterval(dt => {
-  //   requestInterval(dt => {
-  //     // console.log("game -> dt", dt);
-  //     // const game = requestInterval(dt => {
-  //     if (stop.current) return;
-  //     const curPosX = positions.current.ball[0];
-  //     const curPosY = positions.current.ball[1];
-  //     const newPosX = curPosX + 1;
-  //     const newPosY = curPosY + 1;
-  //     positions.current.ball[0] = newPosX;
-  //     positions.current.ball[1] = newPosY;
-  //     moveSection(ballRef.current, newPosX, newPosY);
-  //     // console.log("dt", dt)
-  //   })
-  // );
-
-  // const stopGame = () => {
-  //   if(!stop.current) {
-  //     game.clear()
-  //     stop.current = true
-  //   } else {
-  //     game.start()
-  //     stop.current = false
-  //   }
-  //   // console.log("game", game);
-  //   // cancelAnimationFrame(game);
-  //   // positions.current.ball[0] = 0;
-  //   // positions.current.ball[1] = 0;
-  //   // stop.current = !stop.current;
-  //   // moveSection(ballRef.current, 0, 0)
-  // };
-
-  // const [{ x, y }, setSpring] = useSpring(() => ({ x: 0, y: 0 }));
-  // const bind = useGesture({
-  //   onDrag: ({ movement: [mx, my], memo = [x.getValue(), y.getValue()] }) => {
-  //     setSpring({
-  //       x: memo[0] + mx,
-  //       y: memo[1] + my,
-  //       config: { tension: 300, friction: 40, mass: 10 }
-  //     });
-  //     return memo;
-  //   }
-  // });
-
-  const sensitivity = 1.5;
   const [{ yConsoleLeft }, setSpringLeft] = useSpring(() => ({
     yConsoleLeft: 0
   }));
+
   const bindLeft = useGesture({
     // onDrag: ({ movement: [mx, my], memo = yConsoleLeft.getValue(), down }) => {
     onDrag: ({ movement: [mx, my], down, last }) => {
+      stop.current = false;
       positions.current.paddleLeft[0] = mx;
       positions.current.paddleLeft[1] = my;
       if (last) {
@@ -283,7 +144,7 @@ function IO(props) {
 
   // const transformPaddleLeft = yConsoleLeft.interpolate({range: [-10, 0, 10], output: [`translate3d(0,-10px,0)`, `translate3d(0,0px,0)`, `translate3d(0,10px,0)`]});
   const transformConsoleLeft = yConsoleLeft.interpolate(
-    y => `translate3d(0,${y * sensitivity}px,0)`
+    y => `translate3d(0,${y * paddleSensitivity}px,0)`
   );
   const transformPaddleLeft = yConsoleLeft.interpolate(
     y => `translate3d(0,${y}px,0)`
@@ -292,9 +153,18 @@ function IO(props) {
   const [{ yConsoleRight }, setSpringRight] = useSpring(() => ({
     yConsoleRight: 0
   }));
+
+  const transformConsoleRight = yConsoleRight.interpolate(
+    y => `translate3d(0,${y * paddleSensitivity}px,0)`
+  );
+  const transformPaddleRight = yConsoleRight.interpolate(
+    y => `translate3d(0,${y}px,0)`
+  );
+
   const bindRight = useGesture({
     // onDrag: ({ movement: [mx, my], memo = yConsoleLeft.getValue(), down }) => {
     onDrag: ({ movement: [mx, my], down, last }) => {
+      stop.current = false;
       positions.current.paddleRight[0] = mx;
       positions.current.paddleRight[1] = my;
       if (last) {
@@ -306,39 +176,172 @@ function IO(props) {
       });
     }
   });
-  // const transformPaddleRight = yConsoleRight.interpolate({range: [-10, 0, 10], output: [`translate3d(0,-10px,0)`, `translate3d(0,0px,0)`, `translate3d(0,10px,0)`]});
-  const transformConsoleRight = yConsoleRight.interpolate(
-    y => `translate3d(0,${y * sensitivity}px,0)`
-  );
-  const transformPaddleRight = yConsoleRight.interpolate(
-    y => `translate3d(0,${y}px,0)`
+
+  const writeScore = (el, score) => {
+    el.innerHTML = score;
+  };
+
+  const playerScored = useCallback(
+    player => {
+      if (player === "player1") {
+        score.current.player1 += 1;
+        writeScore(getSafeRef(player1Score), score.current.player1);
+      }
+      if (player === "player2") {
+        score.current.player2 += 1;
+        writeScore(getSafeRef(player2Score), score.current.player2);
+      }
+      if (score.current.player1 === winningRound) {
+        winner.current = true;
+        winnerFound("Player 1");
+      }
+
+      if (score.current.player2 === winningRound) {
+        winner.current = true;
+        winnerFound("Player 2");
+      }
+      // resetBallAndPauseGame();
+      scored.current = true;
+    },
+    [winnerFound]
   );
 
-  // const xyTranslate = interpolate(
-  //   // [x, y],
-  //   // [positions.current.ball[0], positions.current.ball[1]],
-  //   [valueWrapper(positions.current.ball[0]), valueWrapper(positions.current.ball[1])],
-  //   (xTranslate, yTranslate) => `translate3d(${xTranslate}px,${yTranslate}px,0)`
-  // );
+  useEffect(() => {
+    const pl = getSafeRef(paddleLeftRef);
+    const pr = getSafeRef(paddleRightRef);
+    const br = getSafeRef(ballRef);
+    const cr = getSafeRef(courtRef);
+    let game;
 
-  // useEffect(() => {
-  //   const game = requestInterval(dt => {
-  //     console.log("game -> dt", dt);
-  //     // const game = requestInterval(dt => {
-  //     if (stop.current) return;
-  //     const curPosX = positions.current.ball[0];
-  //     const curPosY = positions.current.ball[1];
-  //     const newPosX = curPosX + 1;
-  //     const newPosY = curPosY + 1;
-  //     positions.current.ball[0] = newPosX;
-  //     positions.current.ball[1] = newPosY;
-  //     moveSection(ballRef.current, newPosX, newPosY);
-  //     // console.log("dt", dt)
-  //   });
-  //   return () => {
-  //     clearRequestInterval(game);
-  //   };
-  // });
+    if (pl && pr && br && cr) {
+      let vx = getRandomArbitrary();
+      let vy = getRandomArbitrary();
+      const plSize = pl.getBBox();
+      const prSize = pr.getBBox();
+      const bSize = br.getBBox();
+      const cSize = cr.getBBox();
+      const courtCenterY = cSize.height / 2;
+      const courtCenterX = cSize.width / 2;
+      const ballRadiusY = bSize.height / 2;
+      const ballRadiusX = bSize.width / 2;
+      const paddleRightHeight = prSize.height / 2;
+      const paddleLeftHeight = plSize.height / 2;
+      const paddleRightWidth = prSize.width;
+      const paddleLeftWidth = plSize.width;
+      const ballAcc = ballAcceleration.current;
+
+      game = requestInterval(() => {
+        console.log("asdfasfdsadfsafd");
+        // if (remotePause && !stop.current) {
+        //   stop.current = true;
+        // }
+        // if (remotePause !== stop.current) {
+        //   stop.current = remotePause;
+        // }
+        if (stop.current || remotePause) return;
+        const lastPosX = positions.current.ball[0];
+        const lastPosY = positions.current.ball[1];
+        const paddleRightPos = positions.current.paddleRight[1];
+        const paddleLeftPos = positions.current.paddleLeft[1];
+
+        let newPosX = lastPosX + ballAcc * vx;
+        let newPosY = lastPosY + ballAcc * vy;
+
+        const dirY = whichDir(lastPosY, newPosY);
+        const dirX = whichDir(lastPosX, newPosX);
+
+        // Check bottom collision
+        // if (newPosY >= bane.centerY - bold.ballSize && diry === -1) {
+        if (newPosY >= courtCenterY - ballRadiusY && dirY === -1) {
+          // console.log("BOTTOM");
+          vy = -vy;
+        }
+
+        // Check top collision
+        // if (newPosY <= bold.ballSize - bane.centerY && diry === 1) {
+        if (newPosY <= ballRadiusY - courtCenterY && dirY === 1) {
+          // console.log("TOP");
+          vy = -vy;
+        }
+
+        // Check right collision
+        if (newPosX >= courtCenterX + 100 && dirX === -1) {
+          vx = -vx;
+          playerScored("player1");
+        }
+
+        // Check left collision
+        // if(x <= bold.ballSize - bane.centerX && dirx === 1) {
+        if (newPosX <= -courtCenterX - 100 && dirX === 1) {
+          vx = -vx;
+          playerScored("player2");
+        }
+
+        // Check right paddle collision
+        if (
+          newPosX + ballRadiusX > courtCenterX - paddleRightWidth &&
+          newPosX < courtCenterX &&
+          newPosY > paddleRightPos - paddleRightHeight &&
+          newPosY < paddleRightPos + paddleRightHeight &&
+          dirX === -1
+        ) {
+          // console.log('right' + dt)
+
+          vy = (paddleRightPos * 7) / 900;
+
+          // Reverse that direction
+          vx = -vx;
+
+          // Accelerate ball for more stressful fun
+          // acc += ballAccelerationFactor;
+          ballAcceleration.current += ballAccelerationFactor;
+        }
+
+        // Check left paddle collisions
+        if (
+          newPosX - ballRadiusX < paddleLeftWidth - courtCenterX &&
+          newPosX > -courtCenterX &&
+          newPosY > paddleLeftPos - paddleLeftHeight &&
+          newPosY < paddleLeftPos + paddleLeftHeight &&
+          dirX === 1
+        ) {
+          // console.log('left' + dt)
+          vy = (paddleLeftPos * 7) / 900;
+
+          // Reverse that direction
+          vx = -vx;
+
+          // Accelerate ball for more stressful fun
+          // acc += ballAccelerationFactor;
+          ballAcceleration.current += ballAccelerationFactor;
+        }
+
+        positions.current.ball[0] = newPosX;
+        positions.current.ball[1] = newPosY;
+
+        if (scored.current) {
+          scored.current = false;
+          stop.current = true;
+          positions.current.ball[0] = 0;
+          positions.current.ball[1] = 0;
+          moveSection(br, 0, 0);
+        } else {
+          moveSection(br, newPosX, newPosY);
+        }
+      });
+    }
+    return () => {
+      clearRequestInterval(game);
+    };
+  }, [
+    paddleLeftRef,
+    paddleRightRef,
+    ballRef,
+    courtRef,
+    playerScored,
+    scored,
+    remotePause
+  ]);
 
   return (
     // <div>
@@ -347,23 +350,14 @@ function IO(props) {
     //   </animated.p>
     // </div>
     <>
-      <button
+      {/* <button
         onClick={() => {
-          // console.log("game", game);
-          console.log("stop", stop);
           stop.current = !stop.current;
-          // console.log(positions)
-          // stopGame();
-          // stop.current = !stop.current;
-          // setSpring({
-          //   x: 100,
-          //   y: 100,
-          //   config: { tension: 10, friction: 0, mass: 10 }
-          // })
+          console.log("stop", stop);
         }}
       >
         Start ball
-      </button>
+      </button> */}
       <svg
         id="prefix__svg615"
         className="prefix__full-game"
@@ -395,7 +389,7 @@ function IO(props) {
               <stop id="prefix__stop16" stopColor="#751F18" offset={0.851} />
               <stop id="prefix__stop18" stopColor="#350816" offset={1} />
             </linearGradient>
-            <g id="prefix__bane" ref={courtRef}>
+            <g id="prefix__bane">
               <path
                 id="prefix__rect237"
                 opacity={0.2}
@@ -403,7 +397,9 @@ function IO(props) {
                 clipRule="evenodd"
                 fill="#fff"
                 d="M365.8 295.5h1228v658.6h-1228z"
+                ref={courtRef}
               />
+              ½
               <path
                 id="prefix__bottum_x5F_bande"
                 className="prefix__st24"
@@ -433,14 +429,7 @@ function IO(props) {
               style={{ transform: transformPaddleRight }}
               ref={paddleRightRef}
             />
-            <animated.g
-              id="prefix__Cocunut"
-              // style={{
-              //   transform: xyTranslate
-              // }}
-              // {...bind()}
-              ref={ballRef}
-            >
+            <g id="prefix__Cocunut" ref={ballRef}>
               <circle
                 id="prefix__circle353"
                 cx={979.8}
@@ -453,7 +442,7 @@ function IO(props) {
                 d="M971.3 608.3c2.7-1.2 5.6-1.8 8.4-1.8 4.6 1.3 8.4 4.1 8.4 4.1.3.1.5.1.7-.1.1-.1.1-.4-.1-.5-.1-.1-2.7-1.9-6.1-3.4 6.2.9 11.9 4.6 14.9 10.4 1.9 3.8 2.2 7.8 1.2 11.4-1.1-.2-3-.2-5.4.9-.1 0-.2.1-.3.1-.2.1-.3.3-.2.5s.3.3.5.2c2.3-1.1 4.2-1.1 5.2-.9-1.5 4.7-5.3 8.8-10.9 11.4-6.1 2.8-12.4 2.8-17.5.4l1.2-1.5c.1-.2.1-.4-.1-.5-.1-.1-.3-.1-.4 0-.1 0-.1.1-.1.1l-1.4 1.6c-.2-.1-.3-.2-.5-.3l1.3-1.6c.1-.2.1-.4-.1-.5-.1-.1-.3-.1-.4 0-.1 0-.1.1-.1.1l-1.3 1.6c-.1-.1-.3-.2-.4-.3l1.3-1.6c.1-.2.1-.4-.1-.5-.1-.1-.3-.1-.4 0-.1 0-.1.1-.1.1l-1.3 1.6c-2.1-1.6-3.8-3.6-5.1-6.1-4.7-9.3-.5-20.5 9.2-24.9z"
                 fill="#c69c6d"
               />
-            </animated.g>
+            </g>
             <g id="prefix__name_x5F_board_x5F_right">
               <path
                 id="prefix__path358"
@@ -596,6 +585,7 @@ function IO(props) {
                 id="prefix__left_x5F_zero"
                 className="prefix__st41 prefix__st42 prefix__st49"
                 transform="translate(875.658 226.915)"
+                ref={player1Score}
               >
                 {"0"}
               </text>
@@ -611,6 +601,7 @@ function IO(props) {
                 id="prefix__right_x5F_zero"
                 className="prefix__st41 prefix__st42 prefix__st49"
                 transform="translate(1027.5 226.915)"
+                ref={player2Score}
               >
                 {"0"}
               </text>
@@ -698,4 +689,9 @@ function IO(props) {
   );
 }
 
+IO.defaultProps = {
+  winnerFound: () => {}
+};
+
 export default IO;
+// export default memo(IO, () => false);

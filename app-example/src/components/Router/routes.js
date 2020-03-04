@@ -7,7 +7,7 @@ import NotFound from "../Pages/NotFound/NotFound";
 import Form from "../Pages/FormSteps/FormSteps";
 import FetchPage from '../Pages/FetchPage/FetchPage';
 import LoaderExample from '../Pages/LoaderExample/LoaderExample';
-import Pong from '../Pong/IO';
+import Pong from '../Pong/Pong';
 
 export const routes = [
   {
