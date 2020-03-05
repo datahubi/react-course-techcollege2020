@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, memo } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import {
   // useSprings,
   // interpolate,
@@ -11,21 +11,7 @@ import { useGesture } from "react-use-gesture";
 const clearRequestInterval = handle => {
   if (!handle) return;
   window.cancelAnimationFrame(handle.value);
-  // window.cancelAnimationFrame
-  //   ? window.cancelAnimationFrame(handle.value)
-  //   : window.webkitCancelAnimationFrame
-  //   ? window.webkitCancelAnimationFrame(handle.value)
-  //   : window.webkitCancelRequestAnimationFrame
-  //   ? window.webkitCancelRequestAnimationFrame(
-  //       handle.value
-  //     ) /* Support for legacy API */
-  //   : window.mozCancelRequestAnimationFrame
-  //   ? window.mozCancelRequestAnimationFrame(handle.value)
-  //   : window.oCancelRequestAnimationFrame
-  //   ? window.oCancelRequestAnimationFrame(handle.value)
-  //   : window.msCancelRequestAnimationFrame
-  //   ? window.msCancelRequestAnimationFrame(handle.value)
-  //   : clearInterval(handle);
+
 };
 
 // Add a function that uses requestAnimationFrame

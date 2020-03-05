@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import IO from "./IO";
 import WinAni from "./WinAnimation";
+
+
 export default function Pong(props) {
   const [pause, setPause] = useState(false);
   // const start = useRef(true);
@@ -29,7 +31,7 @@ export default function Pong(props) {
         // <IO pauseGame={pause} winnerFound={setWinner} />
       )} */}
 
-      {!!winnerFound && <WinAni winner={winnerFound} />}
+      {/* {!!winnerFound && <WinAni winner={winnerFound} />} */}
       <IO winnerFound={setWinner} />
     </>
   );
