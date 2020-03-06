@@ -8,7 +8,7 @@ import Form from "../Pages/FormSteps/FormSteps";
 import FetchPage from '../Pages/FetchPage/FetchPage';
 import LoaderExample from '../Pages/LoaderExample/LoaderExample';
 import Pong from '../Pong/Pong';
-import Graph from '../Graph/Graph'
+import Graphs from '../Pages/Graphs/Graphs'
 
 export const routes = [
   {
@@ -63,7 +63,7 @@ export const routes = [
     name: "Graphs",
     path: "/graph-example",
     exact: false,
-    component: Graph
+    component: Graphs
   },
   {
     name: "pong",
