@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import IO from "./IO";
 import WinAni from "./WinAnimation";
 

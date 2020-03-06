@@ -7,11 +7,11 @@ import {
   // config
 } from "react-spring";
 import { useGesture } from "react-use-gesture";
+import { collisionSound } from './sound';
 
 const clearRequestInterval = handle => {
   if (!handle) return;
   window.cancelAnimationFrame(handle.value);
-
 };
 
 // Add a function that uses requestAnimationFrame
@@ -60,21 +60,30 @@ function whichDir(old, current) {
  * @param {float} min
  * @param {float} max
  */
-function getRandomArbitrary(min = 0.2, max = 1) {
+function getRandomArbitrary(lock = false, min = 0.2, max = 1) {
+  // Math.abs(vx) < 0.3
+  const number = Math.random() * (max - min) + min;
+
+  if (lock && number < lock) {
+    return getRandomArbitrary(lock, min, max);
+  }
+
   if (Math.random() < 0.5) {
-    return Math.random() * (max - min) + min;
+    return number;
   } else {
-    return -(Math.random() * (max - min) + min);
+    return -number;
   }
 }
 
 function IO(props) {
   const { winnerFound, pauseGame: remotePause } = props;
 
+  const ai = useRef(false);
+
   const stop = useRef(true);
 
   const paddleSensitivity = 1.5;
-  const ballAcceleration = useRef(6);
+  const ballAcceleration = useRef(3);
   const ballAccelerationFactor = 2;
 
   const paddleRightRef = useRef();
@@ -99,7 +108,7 @@ function IO(props) {
     paddleRight: [0, 0]
   });
 
-  const winner = useRef();
+  const winner = useRef(false);
 
   const getSafeRef = ref => {
     const curRef = ref.current;
@@ -164,7 +173,9 @@ function IO(props) {
   });
 
   const writeScore = (el, score) => {
-    el.innerHTML = score;
+    if (el) {
+      el.innerHTML = score;
+    }
   };
 
   const playerScored = useCallback(
@@ -192,6 +203,41 @@ function IO(props) {
     [winnerFound]
   );
 
+
+  // useEffect(() => {
+  //   // let bgMusic = new Audio('/audio/bg-music.mp3');  
+  //   // bgMusic.loop = true;  
+  //   // if(!stop.current) {
+  //   //   bgMusic.play()
+  //   // } else {
+  //   //   bgMusic.pause()
+  //   // }
+  //   let bgMusic; 
+  //   bgMusic = new Audio('/audio/bg-music.mp3');  
+  //   // async function playBgMusic() {
+
+  //   //   bgMusic = new Audio('/audio/bg-music.mp3');  
+  //   //   bgMusic.loop = true;  
+  //   //   if(stop.current) {
+  //   //     await bgMusic.pause()
+  //   //   } else {
+  //   //     await bgMusic.play()
+  //   //   }
+  //   // }
+  //   if(stop.current) {
+  //     bgMusic.pause()
+  //   } else {
+  //     bgMusic.play()
+  //   }
+
+  //   // playBgMusic()
+  //   return async () => {
+  //     console.log("bgMusic", bgMusic)
+  //     await bgMusic.pause()
+  //     bgMusic = null
+  //   }
+  // }, [stop])
+
   useEffect(() => {
     const pl = getSafeRef(paddleLeftRef);
     const pr = getSafeRef(paddleRightRef);
@@ -200,7 +246,7 @@ function IO(props) {
     let game;
 
     if (pl && pr && br && cr) {
-      let vx = getRandomArbitrary();
+      let vx = getRandomArbitrary(0.3);
       let vy = getRandomArbitrary();
       const plSize = pl.getBBox();
       const prSize = pr.getBBox();
@@ -217,7 +263,7 @@ function IO(props) {
       const ballAcc = ballAcceleration.current;
 
       game = requestInterval(() => {
-        console.log("asdfasfdsadfsafd");
+        // console.log("asdfasfdsadfsafd");
         // if (remotePause && !stop.current) {
         //   stop.current = true;
         // }
@@ -230,8 +276,8 @@ function IO(props) {
         const paddleRightPos = positions.current.paddleRight[1];
         const paddleLeftPos = positions.current.paddleLeft[1];
 
-        let newPosX = lastPosX + ballAcc * vx;
-        let newPosY = lastPosY + ballAcc * vy;
+        const newPosX = lastPosX + ballAcc * vx;
+        const newPosY = lastPosY + ballAcc * vy;
 
         const dirY = whichDir(lastPosY, newPosY);
         const dirX = whichDir(lastPosX, newPosX);
@@ -241,6 +287,8 @@ function IO(props) {
         if (newPosY >= courtCenterY - ballRadiusY && dirY === -1) {
           // console.log("BOTTOM");
           vy = -vy;
+          // playBeep()
+          collisionSound()
         }
 
         // Check top collision
@@ -248,6 +296,8 @@ function IO(props) {
         if (newPosY <= ballRadiusY - courtCenterY && dirY === 1) {
           // console.log("TOP");
           vy = -vy;
+          // playBeep()
+          collisionSound()
         }
 
         // Check right collision
@@ -281,6 +331,8 @@ function IO(props) {
           // Accelerate ball for more stressful fun
           // acc += ballAccelerationFactor;
           ballAcceleration.current += ballAccelerationFactor;
+          // playBeep()
+          collisionSound()
         }
 
         // Check left paddle collisions
@@ -300,6 +352,8 @@ function IO(props) {
           // Accelerate ball for more stressful fun
           // acc += ballAccelerationFactor;
           ballAcceleration.current += ballAccelerationFactor;
+          // playBeep()
+          collisionSound()
         }
 
         positions.current.ball[0] = newPosX;
@@ -311,8 +365,14 @@ function IO(props) {
           positions.current.ball[0] = 0;
           positions.current.ball[1] = 0;
           moveSection(br, 0, 0);
+          if (ai.current) {
+            setSpringLeft({ yConsoleLeft: 0 });
+          }
         } else {
           moveSection(br, newPosX, newPosY);
+          if (ai.current) {
+            setSpringLeft({ yConsoleLeft: newPosY / 2 });
+          }
         }
       });
     }
@@ -326,7 +386,8 @@ function IO(props) {
     courtRef,
     playerScored,
     scored,
-    remotePause
+    remotePause,
+    setSpringLeft
   ]);
 
   return (
@@ -336,14 +397,18 @@ function IO(props) {
     //   </animated.p>
     // </div>
     <>
-      {/* <button
+      <button
         onClick={() => {
-          stop.current = !stop.current;
-          console.log("stop", stop);
+          // stop.current = !stop.current;
+          // console.log("stop", stop);
+          ai.current = !ai.current;
+          // const context = playBeep(500, 100, "square")
+          // const context = playNote(500, "sine")
+          // console.log("game -> context", context)
         }}
       >
         Start ball
-      </button> */}
+      </button>
       <svg
         id="prefix__svg615"
         className="prefix__full-game"
