@@ -69,7 +69,6 @@ const Chart = props => {
     setChartData(newChartData);
   };
 
-  // const LineChart = props.chartType =  == "line" ? LineChart : BarChart
   if (props.chartType === "bar") {
     return (
       <>
@@ -117,10 +116,14 @@ const CoronaGraph = props => {
   const [chartData, setChartData] = useState(null);
   const { ref, width = 1 } = useResizeObserver();
 
-  // Hvis vi thrower et promise som aldrig resolver
-  // vil Suspense catche det og vise en fallback (loader)
+  // Hvis vi thrower et promise vil Suspense 
+  // catche det og vise en fallback (loader)
   if (loading) {
-    throw new Promise(() => {});
+    throw new Promise(res => {
+      setTimeout(() => {
+        res()
+      }, 100)
+    });
   }
 
   // function fetchCoronaData() {
@@ -128,6 +131,7 @@ const CoronaGraph = props => {
   //     "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=湖北省"
   //   ).then(res => res.json()).catch(err => console.log(err));
   // }
+
   async function fetchCoronaData() {
     setLoading(true);
     try {
@@ -193,8 +197,11 @@ export default function Graphs(props) {
           </div>
         }
       >
+        <h3>Corona udbrud</h3>
         <CoronaGraph />
+        <h3>Random graf</h3>
         <Chart />
+        <h3>Random søjlediagram</h3>
         <Chart chartType="bar" />
       </Suspense>
     </>
