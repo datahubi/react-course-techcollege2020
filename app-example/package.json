@@ -20,10 +20,13 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1",
     "react-spinner-material": "^1.2.0",
+    "react-spring": "^8.0.27",
     "react-transition-group": "^4.3.0",
+    "react-use-gesture": "^7.0.4",
     "recharts": "^2.0.0-beta.1",
     "styled-components": "^5.0.1",
-    "styled-icons": "^9.4.0"
+    "styled-icons": "^9.4.0",
+    "use-resize-observer": "^6.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

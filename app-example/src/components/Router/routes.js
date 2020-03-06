@@ -7,6 +7,8 @@ import NotFound from "../Pages/NotFound/NotFound";
 import Form from "../Pages/FormSteps/FormSteps";
 import FetchPage from '../Pages/FetchPage/FetchPage';
 import LoaderExample from '../Pages/LoaderExample/LoaderExample';
+import Pong from '../Pong/Pong';
+import Graph from '../Graph/Graph'
 
 export const routes = [
   {
@@ -56,6 +58,18 @@ export const routes = [
     path: "/loader-example",
     exact: false,
     component: LoaderExample
+  },
+  {
+    name: "Graphs",
+    path: "/graph-example",
+    exact: false,
+    component: Graph
+  },
+  {
+    name: "pong",
+    path: "/pong",
+    exact: false,
+    component: Pong
   },
   {
     name: "fail",
