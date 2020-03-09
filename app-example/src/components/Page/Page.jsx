@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Footer from '../Footer/Footer';
 import styles from './Page.module.scss';
+
+import { GlobalState } from '../GlobalState/GlobalState';
+
 export const PageStyles = styles;
 
 
@@ -11,8 +14,14 @@ const Page = props => {
     footerComp,
   } = props;
 
+  const { darkmode } = useContext(GlobalState)
+  console.log("darkmode", darkmode)
+
+  const classes = darkmode ? styles.page + " " + styles.darkmode : styles.page
+
   return (
-    <section className={styles.page}>
+    // <section className={styles.page}>
+    <section className={classes}>
       <main className={styles.container}>
         {pageName && (
           <h2>{pageName}</h2>

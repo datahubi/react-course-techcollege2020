@@ -5,10 +5,13 @@ import FunNGames from "../Pages/FunNGames/FunNGames";
 import NewMorph from "../Pages/NewMorph/NewMorph";
 import NotFound from "../Pages/NotFound/NotFound";
 import Form from "../Pages/FormSteps/FormSteps";
-import FetchPage from '../Pages/FetchPage/FetchPage';
-import LoaderExample from '../Pages/LoaderExample/LoaderExample';
-import Pong from '../Pong/Pong';
-import Graph from '../Graph/Graph'
+import FetchPage from "../Pages/FetchPage/FetchPage";
+import LoaderExample from "../Pages/LoaderExample/LoaderExample";
+import Pong from "../Pong/Pong";
+import Graphs from "../Pages/Graphs/Graphs";
+import VR from '../VR/VR';
+import GlobalState from '../GlobalState/GlobalState'
+
 
 export const routes = [
   {
@@ -63,13 +66,25 @@ export const routes = [
     name: "Graphs",
     path: "/graph-example",
     exact: false,
-    component: Graph
+    component: Graphs
   },
   {
     name: "pong",
     path: "/pong",
     exact: false,
     component: Pong
+  },
+  {
+    name: "VR",
+    path: "/vr",
+    exact: false,
+    component: VR
+  },
+  {
+    name: "GlobalS",
+    path: "/gs",
+    exact: false,
+    component: GlobalState
   },
   {
     name: "fail",

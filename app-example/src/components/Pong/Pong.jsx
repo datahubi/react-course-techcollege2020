@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { 
+  // useState 
+} from "react";
 import IO from "./IO";
-import WinAni from "./WinAnimation";
+// import WinAni from "./WinAnimation";
 
 
 export default function Pong(props) {
-  const [pause, setPause] = useState(false);
-  // const start = useRef(true);
-  const [winnerFound, setWinnerFound] = useState(null);
+  // const [pause, setPause] = useState(false);
+  // const [winnerFound, setWinnerFound] = useState(null);
+  // // const start = useRef(true);
 
-  const setWinner = winner => {
-    setWinnerFound(winner);
-    setPause(true);
-  };
+  // const setWinner = winner => {
+  //   setWinnerFound(winner);
+  //   setPause(true);
+  // };
 
   return (
     <>
@@ -32,7 +34,8 @@ export default function Pong(props) {
       )} */}
 
       {/* {!!winnerFound && <WinAni winner={winnerFound} />} */}
-      <IO winnerFound={setWinner} />
+      {/* <IO winnerFound={setWinner} /> */}
+      <IO />
     </>
   );
 }
