@@ -7,7 +7,7 @@ import {
   // config
 } from "react-spring";
 import { useGesture } from "react-use-gesture";
-import { collisionSound } from './sound';
+import { collisionSound } from "./sound";
 
 const clearRequestInterval = handle => {
   if (!handle) return;
@@ -83,8 +83,8 @@ function IO(props) {
   const stop = useRef(true);
 
   const paddleSensitivity = 1.5;
-  const ballAcceleration = useRef(3);
-  const ballAccelerationFactor = 2;
+  const ballAcceleration = useRef(6 );
+  const ballAccelerationFactor = 1.1;
 
   const paddleRightRef = useRef();
   const paddleLeftRef = useRef();
@@ -203,21 +203,20 @@ function IO(props) {
     [winnerFound]
   );
 
-
   // useEffect(() => {
-  //   // let bgMusic = new Audio('/audio/bg-music.mp3');  
-  //   // bgMusic.loop = true;  
+  //   // let bgMusic = new Audio('/audio/bg-music.mp3');
+  //   // bgMusic.loop = true;
   //   // if(!stop.current) {
   //   //   bgMusic.play()
   //   // } else {
   //   //   bgMusic.pause()
   //   // }
-  //   let bgMusic; 
-  //   bgMusic = new Audio('/audio/bg-music.mp3');  
+  //   let bgMusic;
+  //   bgMusic = new Audio('/audio/bg-music.mp3');
   //   // async function playBgMusic() {
 
-  //   //   bgMusic = new Audio('/audio/bg-music.mp3');  
-  //   //   bgMusic.loop = true;  
+  //   //   bgMusic = new Audio('/audio/bg-music.mp3');
+  //   //   bgMusic.loop = true;
   //   //   if(stop.current) {
   //   //     await bgMusic.pause()
   //   //   } else {
@@ -288,7 +287,7 @@ function IO(props) {
           // console.log("BOTTOM");
           vy = -vy;
           // playBeep()
-          collisionSound()
+          collisionSound();
         }
 
         // Check top collision
@@ -297,7 +296,7 @@ function IO(props) {
           // console.log("TOP");
           vy = -vy;
           // playBeep()
-          collisionSound()
+          collisionSound();
         }
 
         // Check right collision
@@ -332,7 +331,7 @@ function IO(props) {
           // acc += ballAccelerationFactor;
           ballAcceleration.current += ballAccelerationFactor;
           // playBeep()
-          collisionSound()
+          collisionSound();
         }
 
         // Check left paddle collisions
@@ -353,7 +352,7 @@ function IO(props) {
           // acc += ballAccelerationFactor;
           ballAcceleration.current += ballAccelerationFactor;
           // playBeep()
-          collisionSound()
+          collisionSound();
         }
 
         positions.current.ball[0] = newPosX;
@@ -397,7 +396,7 @@ function IO(props) {
     //   </animated.p>
     // </div>
     <>
-      <button
+      {/* <button
         onClick={() => {
           // stop.current = !stop.current;
           // console.log("stop", stop);
@@ -408,7 +407,7 @@ function IO(props) {
         }}
       >
         Start ball
-      </button>
+      </button> */}
       <svg
         id="prefix__svg615"
         className="prefix__full-game"
@@ -736,6 +735,18 @@ function IO(props) {
           </animated.g>
         </g>
       </svg>
+      {/* <button
+        onClick={() => {
+          // stop.current = !stop.current;
+          // console.log("stop", stop);
+          ai.current = !ai.current;
+          // const context = playBeep(500, 100, "square")
+          // const context = playNote(500, "sine")
+          // console.log("game -> context", context)
+        }}
+      >
+        Start ball
+      </button> */}
     </>
   );
 }

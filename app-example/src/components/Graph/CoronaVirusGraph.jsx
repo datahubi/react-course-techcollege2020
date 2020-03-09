@@ -12,6 +12,8 @@ import {
 import useResizeObserver from "use-resize-observer";
 import moment from "moment";
 
+const suspender = new Promise(res => res())
+
 const CoronaGraph = props => {
   const [loading, setLoading] = useState(false);
   const [chartData, setChartData] = useState(null);
@@ -21,7 +23,7 @@ const CoronaGraph = props => {
   // Hvis vi thrower et promise vil Suspense
   // catche det og vise en fallback (loader)
   if (loading) {
-    throw new Promise(res => res());
+    throw suspender;
   }
 
   // function fetchCoronaData() {
@@ -44,7 +46,7 @@ const CoronaGraph = props => {
       console.log("fetchCoronaData -> error", error);
     }
   }
-  
+
   function makeChartData(data) {
     console.log("makeChartData -> data", data);
     const chartData = data.results[0].cities.map(city => {
