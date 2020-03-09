@@ -54,6 +54,11 @@
   }
 }
 
+.darkmode {
+  background: #333;
+  color: white;
+}
+
 @mixin animation() {
   width: 100vw;
   position: fixed !important;

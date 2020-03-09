@@ -10,6 +10,7 @@ import LoaderExample from "../Pages/LoaderExample/LoaderExample";
 import Pong from "../Pong/Pong";
 import Graphs from "../Pages/Graphs/Graphs";
 import VR from '../VR/VR';
+import GlobalState from '../GlobalState/GlobalState'
 
 
 export const routes = [
@@ -78,6 +79,12 @@ export const routes = [
     path: "/vr",
     exact: false,
     component: VR
+  },
+  {
+    name: "GlobalS",
+    path: "/gs",
+    exact: false,
+    component: GlobalState
   },
   {
     name: "fail",
