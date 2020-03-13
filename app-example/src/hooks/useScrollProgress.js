@@ -25,23 +25,6 @@ export default function useScrollProgress(throttle = true) {
     [mountValue]
   );
 
-  // const handleScroll = e => {
-  //   const winScroll =
-  //     document.body.scrollTop || document.documentElement.scrollTop;
-  //   const height =
-  //     document.documentElement.scrollHeight -
-  //     document.documentElement.clientHeight;
-  //   const scrolled = (winScroll / height) * 100;
-  //   if (height > 0) {
-  //     setProgress({
-  //       percent: `${scrolled}%`,
-  //       px: winScroll
-  //     });
-  //   } else {
-  //     setProgress(mountValue);
-  //   }
-  // };
-
   const throttledHandleScroll = useThrottledFn(handleScroll);
 
   useEffect(() => {
@@ -55,12 +38,6 @@ export default function useScrollProgress(throttle = true) {
         throttle ? throttledHandleScroll : handleScroll
       );
   }, [throttle, throttledHandleScroll, handleScroll]);
-
-  // useEffect(() => {
-  //   // handleScroll();
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // });
 
   return [progress.percent, progress.px];
 }

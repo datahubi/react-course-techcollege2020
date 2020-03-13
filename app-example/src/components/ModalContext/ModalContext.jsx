@@ -3,7 +3,6 @@ import styles from './ModalContext.module.scss';
 
 
 const Modal = props => {
-  // const context = useContext(ModalContext)
   const { modalContent, hideModal } = props;
   return (
     <div className={styles.wrapper} onClick={hideModal} >
@@ -40,7 +39,7 @@ export default function ModalProvider(props) {
     hideModal: () => setShowModal(false),
     toggleModal: () => setShowModal(!showModal),
     setModalContent: setModalContent,
-    clearModalContent: () => setModalContent(""),
+    clearModalContent: () => setModalContent(null),
     modalContent: modalContent,
   }
 

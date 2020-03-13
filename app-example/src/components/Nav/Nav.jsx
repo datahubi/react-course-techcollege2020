@@ -53,30 +53,30 @@ function Nav(props) {
     };
   }, [pathname, history]);
 
-  useEffect(() => {
-    const handler = e => {
-      const { key } = e;
-      switch (key) {
-        case "ArrowLeft": {
-          return gotoPrev();
-        }
-        case "ArrowRight": {
-          return gotoNext();
-        }
-        case "ArrowUp": {
-          return goBack();
-        }
-        case "ArrowDown": {
-          return goForward();
-        }
-        default: {
-          return;
-        }
-      }
-    };
-    window.addEventListener("keyup", handler);
-    return () => window.removeEventListener("keyup", handler);
-  }, [gotoNext, gotoPrev, goForward, goBack]);
+  // useEffect(() => {
+  //   const handler = e => {
+  //     const { key } = e;
+  //     switch (key) {
+  //       case "ArrowLeft": {
+  //         return gotoPrev();
+  //       }
+  //       case "ArrowRight": {
+  //         return gotoNext();
+  //       }
+  //       case "ArrowUp": {
+  //         return goBack();
+  //       }
+  //       case "ArrowDown": {
+  //         return goForward();
+  //       }
+  //       default: {
+  //         return;
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("keyup", handler);
+  //   return () => window.removeEventListener("keyup", handler);
+  // }, [gotoNext, gotoPrev, goForward, goBack]);
 
   return (
     <nav className={styles.nav}>
