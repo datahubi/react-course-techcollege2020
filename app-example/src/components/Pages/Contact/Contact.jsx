@@ -15,15 +15,17 @@ const ContactPage = props => {
           <li>Navn: Anders And</li>
         </ul>
       </>
-    )
+    );
     showModal();
-  }
+  };
+  
   return (
-  <>
-    <h2>Contact</h2>
-    <p>Kontakt os nu bare!</p>
-    <button onClick={showContactModal}>Vis kontakt info</button>
-  </>
-)};
+    <>
+      <h2>Contact</h2>
+      <p>Kontakt os nu bare!</p>
+      <button onClick={showContactModal}>Vis kontakt info</button>
+    </>
+  );
+};
 
 export default ContactPage;

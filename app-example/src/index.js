@@ -6,16 +6,19 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { GlobalStateProvider } from './components/GlobalState/GlobalState';
 import ModalContext from './components/ModalContext/ModalContext';
+import CustomStyleContext from './components/CustomStyleContext/CustomStyleContext';
 
 ReactDOM.render(
-  <ModalContext>
-    <GlobalStateProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </GlobalStateProvider>
-  </ModalContext>,
-  document.getElementById("root")
+  <CustomStyleContext>
+    <ModalContext>
+      <GlobalStateProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </GlobalStateProvider>
+    </ModalContext>
+  </CustomStyleContext>
+  , document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

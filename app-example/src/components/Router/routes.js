@@ -11,6 +11,7 @@ import Pong from "../Pong/Pong";
 import Graphs from "../Pages/Graphs/Graphs";
 import VR from '../VR/VR';
 import GlobalState from '../GlobalState/GlobalState'
+import CustomStyle from '../Pages/CustomStyles/CustomStyles'
 
 
 export const routes = [
@@ -85,6 +86,12 @@ export const routes = [
     path: "/gs",
     exact: false,
     component: GlobalState
+  },
+  {
+    name: "CustomStyle",
+    path: "/cs",
+    exact: false,
+    component: CustomStyle
   },
   {
     name: "fail",
