@@ -5,13 +5,16 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { GlobalStateProvider } from './components/GlobalState/GlobalState';
+import ModalContext from './components/ModalContext/ModalContext';
 
 ReactDOM.render(
-  <GlobalStateProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </GlobalStateProvider>,
+  <ModalContext>
+    <GlobalStateProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </GlobalStateProvider>
+  </ModalContext>,
   document.getElementById("root")
 );
 

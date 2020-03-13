@@ -5,3 +5,13 @@
   padding: $container-padding;
   background: steelblue;
 }
+
+.progress {
+  height: 1rem;
+  position: fixed;
+  top: $navHeight;
+  left: 0;
+  z-index: 9999999;
+  background: rgb(192, 61, 115);
+  transition: width 100ms ease;
+}

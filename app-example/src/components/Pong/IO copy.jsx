@@ -7,7 +7,6 @@ import {
   // config
 } from "react-spring";
 import { useGesture } from "react-use-gesture";
-
 import { collisionSound } from "./sound";
 
 const clearRequestInterval = handle => {
@@ -34,7 +33,12 @@ const requestInterval = fn => {
 
 function moveSection(domElemnt, xOffset, yOffset) {
   if (domElemnt) {
-    const transformAttr = `translate3d(${xOffset}px,${yOffset}px,0)`;
+    // let transformAttr = ' translate3d(' + xOffset + ', ' + yOffset + '0)' + ' ' + extras;
+    // let transformAttr = ` translate(${xOffset},${yOffset})`;
+    // domElemnt.setAttribute('transform', transformAttr);
+    // let transformAttr = ` translate(${xOffset},${yOffset})`;
+    // domElemnt.setAttribute('transform', transformAttr);
+    let transformAttr = `translate3d(${xOffset}px,${yOffset}px,0)`;
     domElemnt.style.transform = transformAttr;
   }
 }
@@ -79,7 +83,7 @@ function IO(props) {
   const stop = useRef(true);
 
   const paddleSensitivity = 1.5;
-  const ballAcceleration = useRef(6);
+  const ballAcceleration = useRef(6 );
   const ballAccelerationFactor = 1.1;
 
   const paddleRightRef = useRef();
@@ -258,9 +262,14 @@ function IO(props) {
       const ballAcc = ballAcceleration.current;
 
       game = requestInterval(() => {
-
+        // console.log("asdfasfdsadfsafd");
+        // if (remotePause && !stop.current) {
+        //   stop.current = true;
+        // }
+        // if (remotePause !== stop.current) {
+        //   stop.current = remotePause;
+        // }
         if (stop.current || remotePause) return;
-
         const lastPosX = positions.current.ball[0];
         const lastPosY = positions.current.ball[1];
         const paddleRightPos = positions.current.paddleRight[1];
@@ -273,6 +282,7 @@ function IO(props) {
         const dirX = whichDir(lastPosX, newPosX);
 
         // Check bottom collision
+        // if (newPosY >= bane.centerY - bold.ballSize && diry === -1) {
         if (newPosY >= courtCenterY - ballRadiusY && dirY === -1) {
           // console.log("BOTTOM");
           vy = -vy;
@@ -281,6 +291,7 @@ function IO(props) {
         }
 
         // Check top collision
+        // if (newPosY <= bold.ballSize - bane.centerY && diry === 1) {
         if (newPosY <= ballRadiusY - courtCenterY && dirY === 1) {
           // console.log("TOP");
           vy = -vy;
@@ -295,6 +306,7 @@ function IO(props) {
         }
 
         // Check left collision
+        // if(x <= bold.ballSize - bane.centerX && dirx === 1) {
         if (newPosX <= -courtCenterX - 100 && dirX === 1) {
           vx = -vx;
           playerScored("player2");

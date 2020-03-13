@@ -7,6 +7,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "aframe": "^1.0.4",
+    "beautiful-react-hooks": "^0.22.6",
     "easy-peasy": "^3.3.0",
     "moment": "^2.24.0",
     "node-sass": "^4.13.1",
