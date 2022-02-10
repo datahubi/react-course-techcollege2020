@@ -10,7 +10,7 @@
     "beautiful-react-hooks": "^0.22.6",
     "easy-peasy": "^3.3.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.13.0",
     "react-canvas-draw": "^1.1.0",
     "react-color": "^2.18.0",
